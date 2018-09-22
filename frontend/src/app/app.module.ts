@@ -5,15 +5,17 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home/home.component';
+import { HeaderComponent } from './header/header.component';
 
 const appRoutes: Routes = [
-  { path: 'h', component: HomeComponent },
+  { path: '', component: HomeComponent },
 ];
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent
+    HomeComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,

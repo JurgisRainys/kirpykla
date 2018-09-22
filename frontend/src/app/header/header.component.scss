@@ -1,0 +1,39 @@
+$headerHeight: 60px;
+
+header {
+  width: 100%;
+  height: $headerHeight;
+  background-color: black;
+  position: fixed;
+  color: white
+}
+
+header a {
+  color: inherit;
+  height: 100%;
+  line-height: $headerHeight;
+  font-size: 18px;
+  display: inline-block;
+}
+
+header a:hover {
+  color: lightgrey;
+  text-decoration: none;
+}
+
+#nav-links {
+  display: inline-block;
+  position: absolute;
+  right: 0;
+}
+
+.nav-link {
+  padding-right: 20px;
+}
+
+#logo {
+  position: absolute;
+  left: 0;
+  padding-left: 20px;
+  font-size: 30px;
+}
