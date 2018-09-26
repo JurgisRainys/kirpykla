@@ -7,11 +7,15 @@ import { HomeService } from './home.service'
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  text: String;
+  banner: String;
   
-  constructor(private homeService: HomeService) { }
+  constructor(private homeService: HomeService) {
+  }
 
   ngOnInit() {
-    this.homeService.updateOnChange(this.text)
+    let banner = document.querySelector("#home-banner") as HTMLElement
+    banner.style.color = 'black';
+    // './assets/img/banner_4.jpg';
+    // this.homeService.updateOnChange(this.text)
   }
 }

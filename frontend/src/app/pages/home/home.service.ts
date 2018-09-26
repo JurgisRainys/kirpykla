@@ -9,10 +9,8 @@ import { Observable } from 'rxjs';
 export class HomeService {
   constructor(private http: HttpClient) { }
 
-  updateOnChange(text: String): void {
-    this.http.get<String>('http://localhost:3000/home')
-    .subscribe(data =>
-      text = data
-    )
-  }
+  // sufixint
+  // getBanner(): String {
+  //   this.http.get<String>('http://localhost:3000/home')
+  // }
 }
