@@ -3,7 +3,7 @@
   width: 100%;
   height: 600px;
   padding-top: 60px;
-  background: url('../../../assets/img/banner-1.jpg');
+  background: url('/assets/img/banner-1.jpg');
   background-size: cover;
   text-align: center;
   font-size: 8rem;
@@ -17,20 +17,32 @@
   text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
-.black-line-wrapper {
-  padding-top: 50px;
+#lol::after {
+  display: block;
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0, #fff 100%);
+  margin-top: -149px;
+  height: 150px;
+  width: 100%;
+  content: '';
 }
 
-.black-line-wrapper .black-line {
-  background-color: gray;
+.padding-top-100 {
+  padding-top: 100px;
+}
+
+.black-line {
+  background-color: #ececec;
   height: 3px;
   border-radius: 50%;
 }
 
 .description-title {
   text-align: center;
+  margin: 20px;
 }
 
 .description-content {
-  padding-top: 50px;
+  padding-top: 20px;
+  padding-bottom: 200px;
+  text-align: center;
 }
