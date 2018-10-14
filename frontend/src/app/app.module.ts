@@ -7,14 +7,14 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home/home.component';
 import { HeaderComponent } from './header/header.component';
 import { ReservationComponent } from './pages/reservation/reservation.component';
-import { ShopServicesComponent } from './pages/shop-services/shop-services.component';
-import { ContactsComponent } from './pages/contacts/contacts.component';
+import { PricesComponent } from './pages/prices/prices.component';
+import { ContactComponent } from './pages/contact/contact.component';
 
 const appRoutes: Routes = [
   { path: '', component: HomeComponent },
-  { path: 'rezervacija', component: ReservationComponent},
-  { path: 'paslaugos', component: ShopServicesComponent},
-  { path: 'kontaktai', component: ContactsComponent}
+  { path: 'rezervacija', component: ReservationComponent },
+  { path: 'kontaktai', component: ContactComponent },
+  { path: 'kainos', component: PricesComponent }
 ];
 
 @NgModule({
@@ -23,8 +23,8 @@ const appRoutes: Routes = [
     HomeComponent,
     HeaderComponent,
     ReservationComponent,
-    ShopServicesComponent,
-    ContactsComponent
+    PricesComponent,
+    ContactComponent
   ],
   imports: [
     BrowserModule,

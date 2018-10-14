@@ -1,16 +1,15 @@
-$headerHeight: 60px;
+@import 'scss_variables';
 
 header {
   width: 100%;
   height: $headerHeight;
   background-color: black;
-  //position: fixed;
   color: white;
 }
 
 header a {
   color: inherit;
-  height: 100%;
+  height: $headerHeight;
   line-height: $headerHeight;
   font-size: 18px;
   display: inline-block;

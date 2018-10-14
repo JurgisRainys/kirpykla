@@ -1,0 +1,17 @@
+<div id="prices-table-container" class="col-sm-8 col-sm-offset-2">
+  <h2>Čia yra pateiktos visos mūsų kirpykloje teikiamos paslaugos:</h2>
+  <table class="table col-sm-10">
+    <thead>
+      <tr>
+        <th> Paslauga </th>
+        <th> Kaina </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let s of servicesWithPrices">
+        <td>{{s.name}}</td>
+        <td>{{s.price}} &euro;</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
