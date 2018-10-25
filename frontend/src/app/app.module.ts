@@ -9,12 +9,14 @@ import { HeaderComponent } from './header/header.component';
 import { ReservationComponent } from './pages/reservation/reservation.component';
 import { PricesComponent } from './pages/prices/prices.component';
 import { ContactComponent } from './pages/contact/contact.component';
+import { LoginComponent } from './pages/login/login.component';
 
 const appRoutes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'rezervacija', component: ReservationComponent },
   { path: 'kontaktai', component: ContactComponent },
-  { path: 'kainos', component: PricesComponent }
+  { path: 'kainos', component: PricesComponent },
+  { path: 'prisijungti', component: LoginComponent }
 ];
 
 @NgModule({
@@ -24,14 +26,14 @@ const appRoutes: Routes = [
     HeaderComponent,
     ReservationComponent,
     PricesComponent,
-    ContactComponent
+    ContactComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     RouterModule.forRoot(
-      appRoutes,
-      { enableTracing: true } // <-- debugging purposes only
+      appRoutes
     )
   ],
   providers: [],

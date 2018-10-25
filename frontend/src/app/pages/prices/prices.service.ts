@@ -7,7 +7,6 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class PricesService {
-
   constructor(private http: HttpClient) { }
 
   getServicesAndPrices(): Observable<ServiceWithPrice[]> {

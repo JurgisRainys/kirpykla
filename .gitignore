@@ -1,4 +1,5 @@
 frontend/node_modules/*
 backend/node_modules/*
+backend/configs/keys.js
 frontend/dist/
 *package-lock.json
