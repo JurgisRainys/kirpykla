@@ -1,66 +1,59 @@
 const passport = require('passport')
 const GoogleStrat = require('passport-google-oauth').OAuth2Strategy
-const LocalStrat = require('passport-local')
-const keys = require('./keys')
-const User = require('../api/models/user')
+const LocalStrat = require('passport-local').Strategy
 const mongoose = require('mongoose')
+const bcrypt = require('bcrypt');
+
+const keys = require('./keys')
+const UserLocal = require('../api/models/userLocal')
 
 passport.serializeUser((user, done) => {
+  console.log("serializeUser: ", user)
   done(null, user._id)
 })
 
-passport.deserializeUser((_id, done) => {
-  User.findById(_id).then((user) => 
-    done(null, user)
-  )
+passport.deserializeUser((id, done) => {
+  console.log("deserialize: ", id)
+  UserLocal
+    .findById(id)
+    .then((user) => {
+      done(null, user)
+    })
+    .catch(err => console.log(err))
 })
 
 passport.use(
-  new GoogleStrat({
-    clientID: keys.googleCredentials.clientID,
-    clientSecret: keys.googleCredentials.clientSecret,
-    callbackURL: '/auth/google/callback'
-  }, 
-  (_, __, profile, done) => {
-    User
-    .findOne({ googleId: profile.id})
-    .then(user => {
-      if (user) {
-        return done(null, user)
-      } else {
-        new User({
-          _id: new mongoose.Types.ObjectId(),
-          name: profile.displayName,
-          googleId: profile.id,
-          gender: profile.gender,
-          services: []
-        }) 
-        .save()
-        .then(u => done(null, u))
-        .catch(e => done(e))
-      }
-    })
-    .catch(e => done(e))
-    // send cookie back with userId
-  })
-  // }),
-  // new LocalStrat(  
-  //   function(username, password, done) {
-  //     // database dummy - find user and verify password
-  //     if(username === 'devils name' && password === '666'){
-  //       done(null, {
-  //         id: 666,
-  //         firstname: 'devils',
-  //         lastname: 'name',
-  //         email: 'devil@he.ll',
-  //         verified: true
-  //       });
-  //     }
-  //     else {
-  //       done(null, false);
-  //     }
-  //   }
-  // )
+  new LocalStrat(
+    { session: false, passReqToCallback: true }, 
+    (req, _, __, done) => done(null, req.validUser ? req.validUser : false)
+  )
 )
 
 module.exports = passport
+
+  // new GoogleStrat({
+    //   clientID: keys.googleCredentials.clientID,
+    //   clientSecret: keys.googleCredentials.clientSecret,
+    //   callbackURL: '/auth/google/callback'
+    // }, 
+    // (_, __, profile, done) => {
+    //   User
+    //   .findOne({ googleId: profile.id})
+    //   .then(user => {
+    //     if (user) {
+    //       return done(null, user)
+    //     } else {
+    //       new User({
+    //         _id: new mongoose.Types.ObjectId(),
+    //         name: profile.displayName,
+    //         googleId: profile.id,
+    //         gender: profile.gender
+    //       }) 
+    //       .save()
+    //       .then(u => done(null, u))
+    //       .catch(e => done(e))
+    //     }
+    //   })
+    //   .catch(e => done(e))
+    //   // send cookie back with userId
+    // }),

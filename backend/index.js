@@ -1,17 +1,23 @@
-var express = require('express');
-var mongoose = require('mongoose');
-var bodyParser = require('body-parser');
-var app = express();
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const bearerTokenParser = require('express-bearer-token')
+const app = express();
+const cookieparser = require('cookie-parser')
 const passport = require('./configs/passport-setup')  
 
-const priceRoutes = require('./api/routes/prices');
+const priceRoutes = require('./api/routes/prices')
 const authorizationRoutes = require('./api/routes/authorization')
 const hairdresserRoutes = require('./api/routes/hairdressers')
 const reservationRoutes = require('./api/routes/reservations')
+
 const cookieKey = require('./configs/keys').cookieKey
 mongoose.connect('mongodb://localhost:27017/kirpykla', { useNewUrlParser: true });
 
 // app.use(express.static(path.join(__dirname, './static')));
+
+app.use(cookieparser())
+app.use(bearerTokenParser())
 
 // kad body isparsintu
 app.use(bodyParser.json());
@@ -25,7 +31,7 @@ app.use(require('cookie-session')({
 }))
 
 app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.session());
 
 app.use(function(_, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
