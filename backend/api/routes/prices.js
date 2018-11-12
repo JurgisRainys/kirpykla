@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const passport = require('passport')
 
 const router = express.Router();
 const Price = require('../models/prices');
@@ -25,7 +26,7 @@ router.get('/:id', (req, resp, __) =>
     .catch(err => resp.status(400).json(err))
 );
 
-router.post('/', (req, resp, __) => {
+router.post('/', passport.authenticate('local'), (req, resp, __) => {
   let price = new Price({
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
@@ -38,7 +39,7 @@ router.post('/', (req, resp, __) => {
     .catch(err => resp.status(400).json(err));
 });
 
-router.put('/:id', (req, resp, _) => {
+router.put('/:id', passport.authenticate('local'), (req, resp, _) => {
   let price = new Price({
     _id: req.params.id,
     name: req.body.name,
@@ -56,7 +57,7 @@ router.put('/:id', (req, resp, _) => {
   )
 })
 
-router.delete('/:id', (req, resp, _) => 
+router.delete('/:id', passport.authenticate('local'), (req, resp, _) => 
   Price
     .findOneAndDelete({ _id: req.params.id })
     .then(deletedDoc => {

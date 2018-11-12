@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const moment = require('moment');
+const passport = require('passport')
 
 const router = express.Router();
 const Reservation = require('../models/reservation');
@@ -19,21 +20,21 @@ const formatReservation = reservation => {
 
 const formatReservations = res => res[0] ? res.map(formatReservation) : []
 
-router.get('/', (_, resp, __) =>
+router.get('/', passport.authenticate('local'), (_, resp, __) =>
   Reservation
     .find()
     .then(result => resp.status(200).json(formatReservations(result)))
     .catch(err => resp.status(400).json(err))
 );
 
-router.get('/:id', (req, resp, __) => 
+router.get('/:id', passport.authenticate('local'), (req, resp, __) => 
   Reservation
     .findById(req.params.id)
     .then(result => resp.status(result ? 200 : 404).json(formatReservation(result)))
     .catch(err => resp.status(400).json(err))
 );
 
-router.post('/', (req, resp, __) => {
+router.post('/', passport.authenticate('local'), (req, resp, __) => {
   Hairdresser
     .findById(req.body.hairdresser)
     .then(result => {
@@ -65,7 +66,7 @@ router.post('/', (req, resp, __) => {
     })
 });
 
-router.put('/:id', (req, resp, _) => {
+router.put('/:id', passport.authenticate('local'), (req, resp, _) => {
   Hairdresser
   .findById(req.body.hairdresser)
   .then(result => {
@@ -107,7 +108,7 @@ router.put('/:id', (req, resp, _) => {
   })
 })
 
-router.delete('/:id', (req, resp, _) => 
+router.delete('/:id', passport.authenticate('local'), (req, resp, _) => 
   Reservation
     .findOneAndDelete({ _id: req.params.id })
     .then(deletedDoc => {

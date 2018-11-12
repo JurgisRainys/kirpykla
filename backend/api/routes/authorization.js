@@ -1,13 +1,13 @@
-const jwt = require('jsonwebtoken');
 const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const passport = require('passport')
 const router = express.Router();
+const jwt = require('jsonwebtoken')
 
 const UserLocal = require('../models/userLocal')
+const defaultNewUserRole = require('../../configs/keys').defaultNewUserRole
 const keys = require('../../configs/keys')
-// const authenticate = jwt.verify({ secret : keys.jwtSecret });
 
 router.get('/login/google',
   passport.authenticate('google', {
@@ -15,40 +15,55 @@ router.get('/login/google',
   })
 );
 
-router.get('/login/google/callback', passport.authenticate('google'), (_, resp, __) => 
-  resp.redirect('http://localhost:4200')
-);
+router.get('/', (req, resp) => {
+  resp.status(200).json({ user: req.user.name })
+})
 
+router.get(
+  '/login/google/callback',
+  passport.authenticate('google'), 
+  successfulLogin
+)
+
+router.post('/login/local',
+  login,
+  generateToken,
+  passport.authenticate('local'),
+  successfulLogin
+)
 
 router.post(
   '/register/local',
   register,
   login,
-  passport.authenticate('local'),
   generateToken,
-  respond
+  passport.authenticate('local'),
+  successfulLogin
 )
-
-router.post(
-  '/login/local',  (req, resp) => {
-    if (!req.token) resp.status(400).send("no bearer token provided")
-
-    authenticated
-
-  }
-)
-
-const authenticated = (token) => {
-  try { return { data: jwt.verify(token, keys.jwtSecret) }}
-  catch (e) { return { error: e }}
-}
 
 const error = (s) => ({ error: s })
 
 const isString = (s) => typeof s === 'string'
 
 function login (req, resp, next) {
+  const badReq = s => resp.status(400).json(s)
   let userInDb = null;
+  console.log(req.token)
+
+  if (req.cookie.jwt) {
+    try {
+      console.log(req.cookie.jwt)
+      var decoded = jwt.verify(req.cookie.jwt, keys.jwtSecret)
+      req.body.username = decoded.name
+      req.body.password = decoded.password      
+    } catch (_) {
+      return resp.status(400).json("token invalid")
+    }
+  }
+
+  if (!req.body.username) return resp.status(400).json("no username provided")
+  if (!req.body.password) return resp.status(400).json("no password provided")
+
   UserLocal
     .findOne({ name: req.body.username })
     .then(user => {
@@ -58,7 +73,8 @@ function login (req, resp, next) {
     })
     .then(hashesMatch => {
       if (!hashesMatch) throw error('provided password was incorrect.')
-      req.validUser = userInDb
+      req.user = userInDb
+      
       next()
     })
     .catch(e => {
@@ -91,6 +107,7 @@ function register(req, resp, next) {
     .then(hash => {
       return new UserLocal({
         _id: new mongoose.Types.ObjectId(),
+        role: defaultNewUserRole,
         password: hash,
         name
       }).save()
@@ -109,20 +126,19 @@ function register(req, resp, next) {
     })
 }
 
+function successfulLogin(req, resp) {
+  const token = jwt.sign({ id: req.user._id, user: req.user.username }, keys.jwtSecret)
+  resp.status(200).send({ user: req.user, token })
+}
+
 function generateToken(req, res, next) {  
   req.token = jwt.sign(
     { id: req.user._id }, 
     keys.jwtSecret, 
     { expiresIn: '2h' }
   )
+  res.cookie('jwt', req.token)
   next()
-}
-
-function respond(req, res) {  
-  res.status(200).json({
-    user: req.body.username,
-    token: req.token
-  });
 }
 
 module.exports = router;

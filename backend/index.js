@@ -10,6 +10,7 @@ const priceRoutes = require('./api/routes/prices')
 const authorizationRoutes = require('./api/routes/authorization')
 const hairdresserRoutes = require('./api/routes/hairdressers')
 const reservationRoutes = require('./api/routes/reservations')
+const userRoutes = require('./api/routes/users')
 
 const cookieKey = require('./configs/keys').cookieKey
 mongoose.connect('mongodb://localhost:27017/kirpykla', { useNewUrlParser: true });
@@ -27,11 +28,13 @@ app.use(bodyParser.urlencoded({
 
 app.use(require('cookie-session')({
   maxAge: 24 * 60 * 60 * 1000,
-  keys: [cookieKey]
+  keys: [cookieKey],
+  httpOnly: false,
+  path: '/',
 }))
 
 app.use(passport.initialize());
-// app.use(passport.session());
+app.use(passport.session());
 
 app.use(function(_, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -43,5 +46,6 @@ app.use('/prices', priceRoutes)
 app.use('/auth', authorizationRoutes)
 app.use('/hairdressers', hairdresserRoutes)
 app.use('/reservations', reservationRoutes)
+app.use('/users', userRoutes)
 
 module.exports = app;
