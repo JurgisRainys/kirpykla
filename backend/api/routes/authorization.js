@@ -50,7 +50,7 @@ function login (req, resp, next) {
   let userInDb = null;
   console.log(req.token)
 
-  if (req.cookie.jwt) {
+  if (req.cookie && req.cookie.jwt) {
     try {
       console.log(req.cookie.jwt)
       var decoded = jwt.verify(req.cookie.jwt, keys.jwtSecret)
