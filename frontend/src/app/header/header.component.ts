@@ -14,11 +14,11 @@ export class HeaderComponent implements OnInit {
     
   }
 
-  login() {
-    this.loginService
-    .login()
-    .subscribe(name => {
-      this.router.navigate([''])
-    })
-  }
+  // login() {
+  //   this.loginService
+  //   .login()
+  //   .subscribe(name => {
+  //     this.router.navigate([''])
+  //   })
+  // }
 }

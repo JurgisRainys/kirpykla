@@ -3,7 +3,10 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve && node ../backend/bin/www",
+    "mongo": "cd .. && mongod --config mongodb.config & cd frontend",
+    "api-server": "nodemon ../backend/bin/server.js",
+    "frontend": "ng serve",
+    "start": "npm run mongo & npm run api-server & npm run frontend",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",

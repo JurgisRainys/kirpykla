@@ -1,4 +1,6 @@
-<ng-container
+<!-- <a class="nav-link" href="http://localhost:3000/auth/login/google">PRISIJUNGTI</a> -->
+
+<!-- <ng-container
   *ngIf="user; then loggedIn; else notLoggedIn">
 </ng-container>
 
@@ -11,4 +13,72 @@
   <div>
     Please login.
   </div>
-</ng-template>
+</ng-template> -->
+
+<div class="container login-form-container">
+		<div class="row">
+		<div class="col-md-6 col-md-offset-3">
+			<div class="panel panel-login">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-xs-6">
+							<a (click)="changeFocusTo('login')" [class]="loginFocus ? 'active' : ''" id="login-form-link" [routerLink] >Login</a>
+						</div>
+						<div class="col-xs-6">
+							<a (click)="changeFocusTo('register')" [class]="loginFocus ? '' : 'active'" id="register-form-link" [routerLink] >Register</a>
+						</div>
+					</div>
+					<hr>
+				</div>
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-lg-12">
+
+							<form [formGroup]="loginForm" (ngSubmit)="login(loginForm.value)" *ngIf="loginFocus">
+								<div class="form-group">
+									<input type="text" formControlName="username" name="username" tabindex="1" class="form-control" placeholder="Vartotojas" value="">
+								</div>
+								<div class="form-group">
+									<input type="password" formControlName="password" name="password" tabindex="2" class="form-control" placeholder="Slaptažodis">
+								</div>
+								<div class="form-group">
+									{{disableButtons}}
+									<div class="row">
+										<div class="col-sm-6 col-sm-offset-3">
+											<input type="submit" [disabled] = "!loginForm.valid || disableButtons" name="login-submit" id="login-submit" tabindex="4" class="form-control btn btn-login" value="Log In">
+										</div>
+									</div>
+								</div>
+							</form>
+							
+							<form [formGroup]="registerForm" (ngSubmit)="register(registerForm.value)" *ngIf="!loginFocus">
+								<div class="form-group">
+									<input type="text" formControlName="username" name="username" tabindex="1" class="form-control" placeholder="Vartotojas" value="">
+								</div>
+								<div class="form-group">
+									<input type="password" formControlName="password" name="password" tabindex="2" class="form-control" placeholder="Slaptažodis">
+								</div>
+								<div class="form-group">
+									<input type="password" formControlName="confirmPassword" name="confirm-password" tabindex="2" class="form-control" placeholder="Pakartokite Slaptažodį">
+								</div>
+								<div class="form-group form-validation-errors" *ngIf="validationErrors.length !== 0">
+									<ul *ngFor="let s of validationErrors">
+										<li>{{s}}</li>
+									</ul>
+								</div>
+								<div class="form-group">
+									<div class="row">
+										<div class="col-sm-6 col-sm-offset-3">
+											<input type="submit" [disabled] = "!registerForm.valid || disableButtons" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Register Now">
+										</div>
+									</div>
+								</div>
+							</form>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
