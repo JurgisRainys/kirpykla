@@ -6,10 +6,8 @@ const mongoose = require('mongoose')
 const keys = require('./keys')
 const UserLocal = require('../api/models/userLocal')
 const UserGoogle = require('../api/models/userGoogle')
-const jwt = require('jsonwebtoken')
 
 passport.serializeUser((user, done) => {
-  // const token = jwt.sign({ ...req.user }, keys.jwtSecret)
   done(null, { id: user._id, type: 'googleId' in user ? 'google' : 'local' })
 })
 
@@ -44,7 +42,7 @@ passport.use(
     }, 
     (_, __, profile, done) => {
       UserGoogle
-      .findOne({ googleId: profile.id})
+      .findOne({ googleId: profile.id })
       .then(user => {
         if (user) {
           return done(null, user)
@@ -53,7 +51,6 @@ passport.use(
             _id: new mongoose.Types.ObjectId(),
             name: profile.displayName,
             googleId: profile.id,
-            gender: profile.gender,
             role: keys.defaultNewUserRole
           }) 
           .save()

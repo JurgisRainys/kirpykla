@@ -3,13 +3,12 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const passport = require('passport')
 const router = express.Router();
-const jwt = require('jsonwebtoken')
 
 const UserLocal = require('../models/userLocal')
 const defaultNewUserRole = require('../../configs/keys').defaultNewUserRole
-const keys = require('../../configs/keys')
+const helpers = require('./helpers')
 
-router.get('/login/google',
+router.get('/login/google', 
   passport.authenticate('google', {
     scope: ['profile']
   })
@@ -22,69 +21,65 @@ router.get('/', (req, resp) => {
 router.get(
   '/login/google/callback',
   passport.authenticate('google'), 
-  successfulLogin
+  (req, resp) => {
+    // resp.cookie('authJWT', helpers.generateToken(req.user), { expires: new Date(Date.now() + 3600 * 1000) })
+    resp.redirect('http://localhost:4200')
+  }
 )
 
 router.post('/login/local',
-  login,
-  generateToken,
-  passport.authenticate('local'),
-  successfulLogin
+  loginLocal,
+  okResponse
 )
 
 router.post(
   '/register/local',
-  register,
-  login,
-  generateToken,
-  passport.authenticate('local'),
-  successfulLogin
+  registerLocal,
+  loginLocal,
+  okResponse
 )
 
-const error = (s) => ({ error: s })
+router.post(
+  '/logout/local',
+  logoutLocal,
+  okResponse
+)
 
 const isString = (s) => typeof s === 'string'
 
-function login (req, resp, next) {
-  const badReq = s => resp.status(400).json(s)
+function loginLocal (req, resp, next) {
+  const badReq = helpers.badReq(resp)
   let userInDb = null;
-  console.log(req.token)
 
-  if (req.cookie && req.cookie.jwt) {
-    try {
-      console.log(req.cookie.jwt)
-      var decoded = jwt.verify(req.cookie.jwt, keys.jwtSecret)
-      req.body.username = decoded.name
-      req.body.password = decoded.password      
-    } catch (_) {
-      return resp.status(400).json("token invalid")
-    }
-  }
-
-  if (!req.body.username) return resp.status(400).json("no username provided")
-  if (!req.body.password) return resp.status(400).json("no password provided")
+  if (!req.body.username) return badReq(helpers.error("no username provided"))
+  if (!req.body.password) return badReq(helpers.error("no password provided"))
 
   UserLocal
     .findOne({ name: req.body.username })
     .then(user => {
-      if (!user) throw error('user doesn\'t exist.')
+      if (!user) throw helpers.error('user doesn\'t exist.')
       userInDb = user
       return bcrypt.compare(req.body.password, user.password)
     })
     .then(hashesMatch => {
-      if (!hashesMatch) throw error('provided password was incorrect.')
+      if (!hashesMatch) throw helpers.error('provided password was incorrect.')
+      resp.cookie('authJWT', helpers.generateToken({
+        _id: userInDb._id,
+        name: userInDb.name,
+        password: userInDb.password,
+        role: userInDb.role 
+      }))
       req.user = userInDb
-      
       next()
     })
     .catch(e => {
-      if (typeof e === 'object' && 'error' in e) return badReq(e.error)
+      if (typeof e === 'object' && 'error' in e) return badReq(e)
       else resp.status(500).json(e)
     })
 }
 
-function register(req, resp, next) {
-  const badReq = s => resp.status(400).json(s)
+function registerLocal(req, resp, next) {
+  const badReq = helpers.badReq(resp)
   const pw1 = req.body.password1
   const pw2 = req.body.password2
   const name = req.body.username
@@ -101,7 +96,7 @@ function register(req, resp, next) {
   UserLocal
     .findOne({ name })
     .then(user => {
-      if (user) throw error(`user with such name already exists. Name: ${name}`)
+      if (user) throw helpers.error(`user with such name already exists. Name: ${name}`)
       return bcrypt.hash(pw1, 10)
     })
     .then(hash => {
@@ -114,31 +109,24 @@ function register(req, resp, next) {
     })
     .then(_ => {
       req.body = {
-        ...req.body,
         username: name,
         password: pw1
       }
       next()
     })
     .catch(e => {
-      if (typeof e === 'object' && 'error' in e) return badReq(e.error)
-      else resp.status(500).json(e)
+      if (typeof e === 'object' && 'error' in e) return badReq(e)
+      else resp.status(500).json({ error: e })
     })
 }
 
-function successfulLogin(req, resp) {
-  const token = jwt.sign({ id: req.user._id, user: req.user.username }, keys.jwtSecret)
-  resp.status(200).send({ user: req.user, token })
+function logoutLocal(req, resp, next) {
+  resp.clearCookie('authJWT')
+  next()
 }
 
-function generateToken(req, res, next) {  
-  req.token = jwt.sign(
-    { id: req.user._id }, 
-    keys.jwtSecret, 
-    { expiresIn: '2h' }
-  )
-  res.cookie('jwt', req.token)
-  next()
+function okResponse(req, resp) {
+  resp.status(200).send()
 }
 
 module.exports = router;

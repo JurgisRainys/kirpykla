@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
 const Hairdresser = require('../models/hairdresser');
-const passport = require('passport')
 const helpers = require('./helpers')
 
 const formatHairdresser = hairdresser => {
@@ -12,16 +11,16 @@ const formatHairdresser = hairdresser => {
 
 const formatHairdressers = hairdressers => hairdressers[0] ? hairdressers.map(formatHairdresser) : []
 
-router.get('/', helpers.checkAuth, (_, resp, __) =>
+router.get('/', (_, resp, __) =>
   Hairdresser
     .find()
-    .then(result =>       
+    .then(result =>
       resp.status(200).json(formatHairdressers(result))
     )
     .catch(err => resp.status(400).json(err))
 );
 
-router.get('/:id', helpers.checkAuth, (req, resp, __) => 
+router.get('/:id', (req, resp, __) => 
   Hairdresser
     .findById(req.params.id)
     .then(result => 

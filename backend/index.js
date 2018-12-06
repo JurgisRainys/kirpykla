@@ -12,7 +12,6 @@ const hairdresserRoutes = require('./api/routes/hairdressers')
 const reservationRoutes = require('./api/routes/reservations')
 const userRoutes = require('./api/routes/users')
 
-const cookieKey = require('./configs/keys').cookieKey
 mongoose.connect('mongodb://localhost:27017/kirpykla', { useNewUrlParser: true });
 
 // app.use(express.static(path.join(__dirname, './static')));
@@ -26,12 +25,12 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-app.use(require('cookie-session')({
-  maxAge: 24 * 60 * 60 * 1000,
-  keys: [cookieKey],
-  httpOnly: false,
-  path: '/',
-}))
+// app.use(require('cookie-session')({
+//   maxAge: 24 * 60 * 60 * 1000, // 24h
+//   keys: [cookieKey],
+//   httpOnly: false,
+//   path: '/',
+// }))
 
 app.use(passport.initialize());
 app.use(passport.session());
