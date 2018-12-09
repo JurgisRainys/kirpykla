@@ -5,6 +5,7 @@
 var app = require('../index.js');
 var debug = require('debug')('../../frontend:server');
 var http = require('http');
+process.on('SIGINT', () => { console.log("Bye bye!"); process.exit(); });
 /**
  * Get port from environment and store in Express.
  */

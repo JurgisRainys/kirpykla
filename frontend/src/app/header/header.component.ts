@@ -8,17 +8,37 @@ import { Router } from '@angular/router';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
-  constructor(private loginService: LoginService, private router: Router) { }
+  loggedOutLinks = [
+    [ "/kainos", 'KAINOS' ],
+    [ "/kontaktai", 'KONTAKTAI' ],
+    [ "/prisijungti", 'PRISIJUNGTI' ]
+  ]
 
-  ngOnInit() {
-    
+  loggedInLinks = [
+    [ "/rezervacija", 'REZERVACIJA' ],
+    [ "/kainos", 'KAINOS' ],
+    [ "/kontaktai", 'KONTAKTAI' ],
+  ]
+
+  links
+  constructor(
+    private loginService: LoginService,
+    private router: Router
+  ) { }
+
+  assignLinks(loggedIn: boolean) {
+    this.links = loggedIn
+      ? this.loggedInLinks
+      : this.loggedOutLinks
   }
 
-  // login() {
-  //   this.loginService
-  //   .login()
-  //   .subscribe(name => {
-  //     this.router.navigate([''])
-  //   })
-  // }
+  logout() {
+    this.loginService.successfulLogout()
+    // this.router.navigateByUrl('/')
+  }
+
+  ngOnInit() {
+    this.assignLinks(this.loginService.isLoggedIn())
+    this.loginService.loginEvent().subscribe(loggedIn => this.assignLinks(loggedIn))
+  }
 }

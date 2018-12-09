@@ -22,10 +22,10 @@
 				<div class="panel-heading">
 					<div class="row">
 						<div class="col-xs-6">
-							<a (click)="changeFocusTo('login')" [class]="loginFocus ? 'active' : ''" id="login-form-link" [routerLink] >Login</a>
+							<a (click)="changeFocusTo('login')" [class]="loginFocus ? 'active' : ''" id="login-form-link" [routerLink] >Prisijungti</a>
 						</div>
 						<div class="col-xs-6">
-							<a (click)="changeFocusTo('register')" [class]="loginFocus ? '' : 'active'" id="register-form-link" [routerLink] >Register</a>
+							<a (click)="changeFocusTo('register')" [class]="loginFocus ? '' : 'active'" id="register-form-link" [routerLink] >Registruotis</a>
 						</div>
 					</div>
 					<hr>
@@ -41,11 +41,15 @@
 								<div class="form-group">
 									<input type="password" formControlName="password" name="password" tabindex="2" class="form-control" placeholder="Slaptažodis">
 								</div>
+								<div class="form-group form-validation-errors" *ngIf="validationErrors.length !== 0">
+									<ul *ngFor="let s of validationErrors">
+										<li>{{s}}</li>
+									</ul>
+								</div>
 								<div class="form-group">
-									{{disableButtons}}
 									<div class="row">
 										<div class="col-sm-6 col-sm-offset-3">
-											<input type="submit" [disabled] = "!loginForm.valid || disableButtons" name="login-submit" id="login-submit" tabindex="4" class="form-control btn btn-login" value="Log In">
+											<input type="submit" [disabled] = "!loginForm.valid || disableButtons" name="login-submit" id="login-submit" tabindex="4" class="form-control btn btn-login" value="Prisijungti">
 										</div>
 									</div>
 								</div>
@@ -69,7 +73,7 @@
 								<div class="form-group">
 									<div class="row">
 										<div class="col-sm-6 col-sm-offset-3">
-											<input type="submit" [disabled] = "!registerForm.valid || disableButtons" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Register Now">
+											<input type="submit" [disabled] = "!registerForm.valid || disableButtons" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Registruotis">
 										</div>
 									</div>
 								</div>

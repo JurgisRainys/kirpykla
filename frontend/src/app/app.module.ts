@@ -11,6 +11,8 @@ import { ReservationComponent } from './pages/reservation/reservation.component'
 import { PricesComponent } from './pages/prices/prices.component';
 import { ContactComponent } from './pages/contact/contact.component';
 import { LoginComponent } from './pages/login/login.component';
+import { CookieService } from 'ngx-cookie-service';
+import { FooterComponent } from './footer/footer.component'
 
 const appRoutes: Routes = [
   { path: '', component: HomeComponent },
@@ -28,7 +30,8 @@ const appRoutes: Routes = [
     ReservationComponent,
     PricesComponent,
     ContactComponent,
-    LoginComponent
+    LoginComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,
@@ -38,7 +41,9 @@ const appRoutes: Routes = [
       appRoutes
     )
   ],
-  providers: [],
+  providers: [
+    CookieService,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

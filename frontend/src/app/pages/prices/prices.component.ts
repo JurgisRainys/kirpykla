@@ -16,7 +16,6 @@ export class PricesComponent implements OnInit {
       .getServicesAndPrices()
       .subscribe(arr => {
         this.servicesWithPrices = arr.map(s => new ServiceWithPrice(s.id, s.name, s.price))
-        console.log('kainos: ', this.servicesWithPrices)
       })
   }
 }

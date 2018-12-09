@@ -7,10 +7,14 @@ const unauthorized = resp => s => resp.status(401).json(s)
 const forbidden = resp => s => resp.status(403).json(s)
 const badReq = resp => s => resp.status(400).json(s)
 
-const parseCookieJWT = (req) => {
+const getAuthJWT = (req) => 
+  req.query.accessKey
+    ? req.query.accessKey
+    : undefined
+
+const parseAuthJWT = (token) => {
   try {
-    if (!(req.cookies && req.cookies.authJWT)) return error('not logged in')
-    const decoded = jwt.verify(req.cookies.authJWT, keys.jwtSecret)
+    const decoded = jwt.verify(token, keys.jwtSecret)
     return success(decoded)
   } catch (_) {
     return error("token invalid or expired")
@@ -18,14 +22,16 @@ const parseCookieJWT = (req) => {
 } 
 
 function checkAuth(req, resp, next) {
-  const result = parseCookieJWT(req)
+  const jwt = getAuthJWT(req)
+  if (!jwt) return unauthorized(resp)('no access token provided')
+  const result = parseAuthJWT(jwt)
   if ('error' in result) return unauthorized(resp)(result.error)
   req.user = result.success
   next()
 }
 
 function checkAdmin(req, resp, next) {
-  const result = parseCookieJWT(req)
+  const result = parseAuthJWT(req)
   if ('error' in result) return unauthorized(resp)(result)
   req.user = result.success
   if (!(req.user.role === 'admin')) return forbidden(resp)(error("insufficient permissions"))

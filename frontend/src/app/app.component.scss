@@ -1,4 +1,21 @@
 #app-wrapper {
   font-family: 'Open Sans', sans-serif !important;
   color: black;
+  height: 100%;
+  width: 100%;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column
+}
+
+.header, .footer {
+  flex-shrink: 0;
+  flex-grow: 0
+}
+
+.content {
+  flex-shrink: 1;
+  flex-grow: 1;
 }

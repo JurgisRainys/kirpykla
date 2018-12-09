@@ -1,10 +1,7 @@
 <header>
-  <a id="logo" href="#">LOGO</a>
-  <div id="nav-links">
-    <a class="nav-link" routerLink="/">PAGRINDINIS</a>
-    <a class="nav-link" routerLink="/rezervacija">REZERVACIJA</a>
-    <a class="nav-link" routerLink="/kainos">KAINOS</a>
-    <a class="nav-link" routerLink="/kontaktai">KONTAKTAI</a>
-    <a class="nav-link" routerLink="/prisijungti">PRISIJUNGTI</a>
+  <a id="logo" routerLink="/">LOGO</a>
+  <div id="nav-links" >
+    <a class="nav-link" *ngFor="let s of links" [routerLink]="s[0]">{{s[1]}}</a>
+    <a class="nav-link" *ngIf="this.loginService.isLoggedIn()" (click)="logout()" href>ATSIJUNGTI</a>
   </div>
 </header>

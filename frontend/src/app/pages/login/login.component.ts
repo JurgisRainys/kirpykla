@@ -1,10 +1,9 @@
-import { Component, OnInit, ElementRef, Renderer2, Input } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { LoginService } from './login.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms'
-
-const hasClassActive = (selector: string): boolean => {
-  return document.querySelector(selector).className === 'active'
-}
+import { CookieService } from 'ngx-cookie-service';
+import { Router } from '@angular/router' 
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +17,12 @@ export class LoginComponent implements OnInit {
   loginFocus
   validationErrors
   disableButtons
-  constructor(private loginService: LoginService) { }
+  constructor(
+    private loginService: LoginService,
+    private cookieService: CookieService,
+    private router: Router,
+    private ngZone: NgZone
+  ) { }
 
   ngOnInit() {
     this.loginFocus = true
@@ -62,42 +66,49 @@ export class LoginComponent implements OnInit {
   }
 
   login(formFields) {
-    // this.disableButtons = true
-    this.loginService
-      .login(formFields.username, formFields.password)
-      .subscribe(
-        x => {
-          this.disableButtons = false
-          console.log(x)
-          console.log("XXXXXXXXXXXXXXXXXXXx")
-        },
-        error => {
-          this.disableButtons = false
-          console.log(error)
-        }
+    this.disableButtons = true
+    this.handleLoginResponse(
+      this.loginService
+        .login(formFields.username, formFields.password)
+    )
+  }
+
+  register(formFields) {
+    this.disableButtons = true
+    this.validationErrors = this.registerErrors(formFields.password, formFields.confirmPassword) 
+
+    if (this.validationErrors.length === 0)
+      this.handleLoginResponse(
+        this.loginService
+          .register(formFields.username, formFields.password)
       )
-      // .catch(c => console.log("CCCCCCCCCCCCCCCCCCCC"))
   }
 
   registerErrors(pw, confirmPw) {
     return pw !== confirmPw ? ['Slaptažodžiai nesutampa'] : []
   }
 
-  register(formFields) {
-    // this.disableButtons = true
-    this.validationErrors = this.registerErrors(formFields.password, formFields.confirmPassword) 
-
-    if (this.validationErrors.length === 0)
-      this.loginService
-        .register(formFields.username, formFields.password)
-        .subscribe(x => {
-          this.disableButtons = false
-          console.log('dasdasdasdasdasdasd')
-          console.log(x)
-        })
+  handleLoginResponse(observableResponse: Observable<any>) {
+    observableResponse
+    .subscribe(
+      okResponse => {
+        console.log(okResponse)
+        this.cookieService.set('authJWT', okResponse.token)
+        this.router.navigateByUrl('/')
+        this.loginService.successfulLogin()
+        this.disableButtons = false
+      },
+      errorResponse => {
+        console.log(errorResponse)
+        const errMsg = errorResponse.error.error
+        this.validationErrors = [ errMsg ]
+        this.disableButtons = false
+      }
+    )
   }
 
   changeFocusTo(changeTo: 'register' | 'login') {
+    this.validationErrors = []
     this.loginFocus = changeTo === 'login'
   }
 

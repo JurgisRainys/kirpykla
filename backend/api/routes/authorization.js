@@ -27,16 +27,17 @@ router.get(
   }
 )
 
-router.post('/login/local',
+router.post(
+  '/login/local',
   loginLocal,
-  okResponse
+  respondWithToken
 )
 
 router.post(
   '/register/local',
   registerLocal,
   loginLocal,
-  okResponse
+  respondWithToken
 )
 
 router.post(
@@ -51,24 +52,26 @@ function loginLocal (req, resp, next) {
   const badReq = helpers.badReq(resp)
   let userInDb = null;
 
-  if (!req.body.username) return badReq(helpers.error("no username provided"))
-  if (!req.body.password) return badReq(helpers.error("no password provided"))
+  if (!req.body.username) return badReq(helpers.error("Neįrašėte vartotojo vardo"))
+  if (!req.body.password) return badReq(helpers.error("Neįrašėte vartotojo slaptažodžio"))
 
   UserLocal
     .findOne({ name: req.body.username })
     .then(user => {
-      if (!user) throw helpers.error('user doesn\'t exist.')
+      if (!user) throw helpers.error('Vartotojas neegzistuoja')
       userInDb = user
       return bcrypt.compare(req.body.password, user.password)
     })
     .then(hashesMatch => {
-      if (!hashesMatch) throw helpers.error('provided password was incorrect.')
-      resp.cookie('authJWT', helpers.generateToken({
+      if (!hashesMatch) throw helpers.error('Vartotojo slaptažodis neteisingas')
+      const authJWT = helpers.generateToken({
         _id: userInDb._id,
         name: userInDb.name,
         password: userInDb.password,
         role: userInDb.role 
-      }))
+      })
+      resp.cookie('authJWT', authJWT)
+      req.token = authJWT
       req.user = userInDb
       next()
     })
@@ -96,7 +99,7 @@ function registerLocal(req, resp, next) {
   UserLocal
     .findOne({ name })
     .then(user => {
-      if (user) throw helpers.error(`user with such name already exists. Name: ${name}`)
+      if (user) throw helpers.error(`Vartotojas šiuo vardu jau egzistuoja`)
       return bcrypt.hash(pw1, 10)
     })
     .then(hash => {
@@ -127,6 +130,10 @@ function logoutLocal(req, resp, next) {
 
 function okResponse(req, resp) {
   resp.status(200).send()
+}
+
+function respondWithToken(req, resp) {
+  resp.status(200).json({ token: req.token })
 }
 
 module.exports = router;

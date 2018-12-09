@@ -1,4 +1,4 @@
-<ng-container
+<!-- <ng-container
   *ngIf="user; then loggedIn; else notLoggedIn">
 </ng-container>
 
@@ -11,4 +11,104 @@
   <div>
     Please login.
   </div>
-</ng-template>
+</ng-template> -->
+
+<div class="container reservation-container">
+  <!-- <div class="col-xs-6 col-xs-offset-1 col-md-4 col-md-offset-1 panel"> -->
+  <div class="col-xs-6 col-xs-offset-3 col-md-offset-0 col-md-4 panel">
+    <div class="panel-heading">
+    <h2 class="text-center reservation-header">
+      Rezervuokite laiką
+    </h2>
+    </div>
+    <!-- <select *ngIf="services" ng-model="services" ng-change="console.log('dasdasd')" class="form-control">
+      <option>{{services[0].name}}</option>
+      <option>{{services[1].name}}</option>
+    </select> -->
+    <form class="panel-body reservation-form" [formGroup]="reservationForm" (ngSubmit)="reserve(reservationForm.value)">
+      <div class="form-group">
+        <label for="service">
+          Pasirinkite paslaugą
+        </label>
+        <select id="service-input" formControlName="service" name="service" ng-model="bob2" (change)="serviceSelected($event.target.value)" class="form-control">
+          <option *ngFor="let service of services" [value]="service.id">{{service.name}}</option>
+        </select>
+      </div>
+      <div class="form-group" *ngIf="!hairdressersDisabled">
+        <label for="hairdresser">
+          Pasirinkite kirpėją
+        </label>
+        <select id="hairdresser-input" formControlName="hairdresser" name="hairdresser" (change)="hairdresserSelected($event.target.value)" class="form-control">
+          <option *ngFor="let hairdresser of hairdressersShown" [value]="hairdresser.id">{{hairdresser.name}}</option>
+        </select>
+      </div>
+      <div class="form-group" *ngIf="!dateDisabled">
+        <label for="date">
+          Pasirinkite dieną
+        </label>
+        <select id="date-input" formControlName="date" name="date" (change)="dateSelected($event.target.value)" class="form-control">
+          <option *ngFor="let date of availableDates" [value]="date">{{date}}</option>
+        </select>
+      </div>
+      <div class="form-group" *ngIf="!hourDisabled">
+        <label for="hour">
+          Pasirinkite valandą
+        </label>
+        <select id="hour-input" formControlName="hour" name="hour" class="form-control">
+          <option *ngFor="let hour of availableHours" [value]="hour">{{hour}}h</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <div class="row">
+          <div class="col-sm-6 col-sm-offset-3">
+            <input type="submit" [disabled] = "hourDisabled || dateDisabled || hairdressersDisabled || !reservationForm.valid" name="reserve" tabindex="4" class="form-control btn-default" value="Rezervuoti">
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="reservation-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Rezervacija sėkminga</h2>
+        </div>
+        <div class="modal-body">
+          Jūs sėkmingai užsirezervavote pasirinktą laiką!
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Uždaryti</button>
+        </div>
+      </div>
+    </div>
+  </div>  
+
+  <div *ngIf="reservations" id="prices-table-container" class="col-xs-10 col-xs-offset-1 col-md-7">
+    <h2>Čia yra pateiktos visos jūsų rezervacijos:</h2>
+    <table class="table col-sm-10">
+      <thead>
+        <tr>
+          <th> Paslauga </th>
+          <th> Kirpėjas </th>
+          <th> Data </th>
+          <th> Valanda </th>
+          <th> Kaina </th>
+          <th> Veiksmai </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of reservations">
+          <td>{{r.service}}</td>
+          <td>{{r.hairdresser}}</td>
+          <td>{{r.time.date}}</td>
+          <td>{{r.time.hour}}h</td>
+          <td>{{r.price}} &euro;</td>
+          <td><a href (click)="$event.preventDefault(); deleteReservation(r._id)">Atsisakyti</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
