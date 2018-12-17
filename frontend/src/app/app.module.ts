@@ -12,14 +12,16 @@ import { PricesComponent } from './pages/prices/prices.component';
 import { ContactComponent } from './pages/contact/contact.component';
 import { LoginComponent } from './pages/login/login.component';
 import { CookieService } from 'ngx-cookie-service';
-import { FooterComponent } from './footer/footer.component'
+import { FooterComponent } from './footer/footer.component';
+import { ReservationsComponent } from './pages/hairdReservations/reservations/reservations.component'
 
 const appRoutes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'rezervacija', component: ReservationComponent },
   { path: 'kontaktai', component: ContactComponent },
   { path: 'kainos', component: PricesComponent },
-  { path: 'prisijungti', component: LoginComponent }
+  { path: 'prisijungti', component: LoginComponent },
+  { path: 'rezervacijos', component: ReservationsComponent }
 ];
 
 @NgModule({
@@ -31,7 +33,8 @@ const appRoutes: Routes = [
     PricesComponent,
     ContactComponent,
     LoginComponent,
-    FooterComponent
+    FooterComponent,
+    ReservationsComponent
   ],
   imports: [
     BrowserModule,

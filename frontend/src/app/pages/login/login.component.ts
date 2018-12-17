@@ -92,14 +92,14 @@ export class LoginComponent implements OnInit {
     observableResponse
     .subscribe(
       okResponse => {
-        console.log(okResponse)
+        // console.log(okResponse)
         this.cookieService.set('authJWT', okResponse.token)
         this.router.navigateByUrl('/')
         this.loginService.successfulLogin()
         this.disableButtons = false
       },
       errorResponse => {
-        console.log(errorResponse)
+        // console.log(errorResponse)
         const errMsg = errorResponse.error.error
         this.validationErrors = [ errMsg ]
         this.disableButtons = false

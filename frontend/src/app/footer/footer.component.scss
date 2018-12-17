@@ -1,4 +1,24 @@
 #footer-container {
-  height: 100px;
+  height: 70px;
   background: black;
+  color: white;
 }
+
+.copy {
+  border-top: 1px solid white;
+  position: absolute;
+  text-align: center;
+  bottom: 10px;
+}
+
+.svg {
+  clear: both;
+  // max-height: 50px;
+  // overflow:auto;
+}
+
+// .svg img {
+//   height: auto;
+//   width: auto;
+//   float:right;
+// }

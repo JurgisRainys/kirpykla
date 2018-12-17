@@ -1,0 +1,23 @@
+<div id="prices-table-container" style="padding-top: 50px" class="col-xs-10 col-xs-offset-1 col-md-10">
+  <h2>Čia yra pateiktos visos jūsų rezervacijos:</h2>
+  <table class="table col-sm-10">
+    <thead>
+      <tr>
+        <th> Paslauga </th>
+        <th> Klientas </th>
+        <th> Data </th>
+        <th> Valanda </th>
+        <th> Kaina </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let r of reservations">
+        <td>{{r.service}}</td>
+        <td>{{r.client}}</td>
+        <td>{{r.time.date}}</td>
+        <td>{{r.time.hour}}h</td>
+        <td>{{r.price}} &euro;</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

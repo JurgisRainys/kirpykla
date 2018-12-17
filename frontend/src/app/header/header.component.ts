@@ -14,10 +14,14 @@ export class HeaderComponent implements OnInit {
     [ "/prisijungti", 'PRISIJUNGTI' ]
   ]
 
-  loggedInLinks = [
+  loggedInClientLinks = [
     [ "/rezervacija", 'REZERVACIJA' ],
     [ "/kainos", 'KAINOS' ],
     [ "/kontaktai", 'KONTAKTAI' ],
+  ]
+
+  loggedInHairdresserLinks = [
+    [ "/rezervacijos", 'REZERVACIJOS' ],
   ]
 
   links
@@ -26,9 +30,11 @@ export class HeaderComponent implements OnInit {
     private router: Router
   ) { }
 
-  assignLinks(loggedIn: boolean) {
-    this.links = loggedIn
-      ? this.loggedInLinks
+  assignLinks(user: any) {
+    this.links = user
+      ? user.role === 'hairdresser'
+        ? this.loggedInHairdresserLinks
+        : this.loggedInClientLinks
       : this.loggedOutLinks
   }
 
@@ -38,7 +44,9 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.assignLinks(this.loginService.isLoggedIn())
-    this.loginService.loginEvent().subscribe(loggedIn => this.assignLinks(loggedIn))
+    this.assignLinks(this.loginService.getUser())
+    this.loginService.loginEvent().subscribe(loggedIn => 
+      this.assignLinks(this.loginService.getUser())
+    )
   }
 }

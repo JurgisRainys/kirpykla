@@ -17,6 +17,7 @@ const parseAuthJWT = (token) => {
     const decoded = jwt.verify(token, keys.jwtSecret)
     return success(decoded)
   } catch (_) {
+    console.log(_)
     return error("token invalid or expired")
   }
 } 
@@ -31,10 +32,22 @@ function checkAuth(req, resp, next) {
 }
 
 function checkAdmin(req, resp, next) {
-  const result = parseAuthJWT(req)
-  if ('error' in result) return unauthorized(resp)(result)
+  const jwt = getAuthJWT(req)
+  if (!jwt) return unauthorized(resp)('no access token provided')
+  const result = parseAuthJWT(jwt)
+  if ('error' in result) return unauthorized(resp)(result.error)
   req.user = result.success
   if (!(req.user.role === 'admin')) return forbidden(resp)(error("insufficient permissions"))
+  next()
+}
+
+function checkHairdresser(req, resp, next) {
+  const jwt = getAuthJWT(req)
+  if (!jwt) return unauthorized(resp)('no access token provided')
+  const result = parseAuthJWT(jwt)
+  if ('error' in result) return unauthorized(resp)(result.error)
+  req.user = result.success
+  if (!(req.user.role === 'hairdresser')) return forbidden(resp)(error("insufficient permissions"))
   next()
 }
 
@@ -46,6 +59,7 @@ const generateToken = tokenBody => jwt.sign(
 
 module.exports = {
   checkAuth,
+  checkHairdresser,
   checkAdmin,
   badReq,
   unauthorized,

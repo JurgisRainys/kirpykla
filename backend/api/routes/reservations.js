@@ -81,6 +81,65 @@ router.get('/', helpers.checkAuth, (req, resp, __) => {
     .catch(err => resp.status(400).json(err))
 });
 
+router.get('/hairdresser', helpers.checkHairdresser, (req, resp, __) => {
+  // console.log(req.user)
+  Hairdresser.findOne({ userId: mongoose.Types.ObjectId(req.user._id) })
+  .then(result => {
+    console.log(result._id)
+    return Reservation
+      .aggregate([
+        { $match: { hairdresser: mongoose.Types.ObjectId(result._id) } },
+        // { 
+        //     $lookup:
+        //     {
+        //       from: 'hairdressers',
+        //       localField: '_id',
+        //       foreignField: 'userId',
+        //       as: 'hairdresser'
+        //     }
+        // },
+        {
+          $lookup:
+          {
+            from: 'usersLocal',
+            localField: 'client',
+            foreignField: '_id',
+            as: 'client'
+          }
+        },
+        {
+          $lookup:
+          {
+            from: 'prices',
+            localField: 'service',
+            foreignField: '_id',
+            as: 'service'
+          }
+        },
+        {
+          $project: {
+            time: "$time",
+            client: { $arrayElemAt: ["$client.name", 0] },
+            service: { $arrayElemAt: ["$service.name", 0] },
+            price: { $arrayElemAt: ["$service.price", 0] },
+            _id: "$_id"
+          }
+        }
+      ])
+  }).then(result => {
+    console.log(result)
+    resp.status(200).json(result)
+  })
+  .catch(err => resp.status(400).json(err))
+
+  //
+    // .then(result => {
+    //   console.log(result)
+    //   resp.status(200).json(result)
+    // })
+    // .catch(err => resp.status(400).json(err))
+});
+
 router.get('/freetimes/hairdresser/:hId/service/:sId', helpers.checkAuth, (_, resp, __) => {
   Reservation
     .find()

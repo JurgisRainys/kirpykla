@@ -13,6 +13,14 @@ export class PricesService {
     private loginService: LoginService
   ) { }
 
+  getHairdresserReservations(): Observable<ServiceWithPrice[]> {
+    return this.http.get<any[]>(
+      this.loginService.addAccessKey(
+        `http://localhost:3000/reservations/hairdresser`
+      )
+    )
+  }
+
   getServicesAndPrices(): Observable<ServiceWithPrice[]> {
     return this.http.get<ServiceWithPrice[]>('http://localhost:3000/prices');
   }
